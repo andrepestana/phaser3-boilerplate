@@ -6,8 +6,8 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('background', 'assets/background.png');
-        this.load.spritesheet('character', 'assets/andre.png', { frameWidth: 60, frameHeight: 100 });
+        this.load.image('background', './assets/background.png');
+        this.load.spritesheet('character', './assets/andre.png', { frameWidth: 60, frameHeight: 100 });
     }
     
     create() {

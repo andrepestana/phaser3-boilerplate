@@ -6,11 +6,11 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('background', 'assets/background.png');
-        this.load.image('ground', 'assets/platform.png');
-        this.load.image('star', 'assets/beer.png');//everyone has their own kind of star
-        this.load.image('bomb', 'assets/bomb.png');
-        this.load.spritesheet('character', 'assets/andre.png', { frameWidth: 60, frameHeight: 100 });
+        this.load.image('background', './assets/background.png');
+        this.load.image('ground', './assets/platform.png');
+        this.load.image('star', './assets/beer.png');//everyone has their own kind of star
+        this.load.image('bomb', './assets/bomb.png');
+        this.load.spritesheet('character', './assets/andre.png', { frameWidth: 60, frameHeight: 100 });
         
     }
     create() {
