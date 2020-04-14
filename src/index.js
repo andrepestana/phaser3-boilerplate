@@ -4,8 +4,8 @@ import Level1Scene from './scenes/Level1Scene'
 
 const config = {
     type: Phaser.Sacel,
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 768,
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -16,6 +16,9 @@ const config = {
         gravity: { y: 300 },
         debug: false
       }
+    },
+    input: {
+      activePointers: 3,
     },
     scene: [ MainMenuScene, Level1Scene ]
 }

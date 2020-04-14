@@ -11,39 +11,44 @@ export default class MainMenuScene extends Phaser.Scene {
     }
     
     create() {
-        this.add.image(400, 300, 'background');
+        this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
 
+        console.log(this.cameras.main)
         this.txt = this.make.text({
-            x: 400,
+            x: this.cameras.main.centerX,
             y: 100,
             text: 'Pestana World',
             origin: { x: 0.5, y: 0.5 },
             style: {
                 font: 'bold 40px Arial',
-                fill: 'white',
+                fill: 'purple',
                 wordWrap: { width: 300 }
             }
         })
 
         this.txt = this.make.text({
-            x: 400,
-            y: 500,
-            text: 'Press Space Bar to Start',
+            x: this.cameras.main.centerX,
+            y: this.cameras.main.height - 100,
+            text: 'Press space bar \nor touch the screen to start',
             origin: { x: 0.5, y: 0.5 },
             style: {
                 font: 'bold 20px Arial',
-                fill: 'white',
-                wordWrap: { width: 800 }
+                fill: 'black',
+                wordWrap: { width: 800 },
+                align: 'center'
             }
         })
 
-        this.player = this.add.sprite(400, 300, 'character', 4);
+        this.player = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'character', 4);
 
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard. KeyCodes.SPACE)
+        this.input.on('pointerdown', function(){
+            this.touchingScreen = true;
+        }, this);
     }
 
     update() {
-        if(this.spaceBar.isDown) {
+        if(this.spaceBar.isDown || this.touchingScreen) {
             this.scene.start('Level1Scene')
         }
     }

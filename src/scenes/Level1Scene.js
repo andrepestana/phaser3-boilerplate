@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import MyButton from './MyButton'
 
 export default class Level1Scene extends Phaser.Scene {
     constructor() {
@@ -6,25 +7,79 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     preload() {
+        this.touchingLeft = false
         this.load.image('background', './assets/background.png');
         this.load.image('ground', './assets/platform.png');
+        
         this.load.image('star', './assets/beer.png');//everyone has their own kind of star
         this.load.image('bomb', './assets/bomb.png');
         this.load.spritesheet('character', './assets/andre.png', { frameWidth: 60, frameHeight: 100 });
         
+        this.load.image('arrowLeft', './assets/arrow-left.png');
+        this.load.image('arrowRight', './assets/arrow-right.png');
+        this.load.image('jumpButton', './assets/button_grey.png');
     }
     create() {
-        this.gameOver = false;
-        this.score = 0;
+        this.scale.startFullscreen()
+        this.allowRestartByTouching = false
+        this.gameOver = false
+        this.score = 0
 
-        this.add.image(400, 300, 'background');
+        console.log('this.cameras.main.y - this.cameras.main.centerY', this.cameras.main.y - this.cameras.main.centerY)
+        this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(400, 578, 'ground').setScale(2).refreshBody();
-        this.platforms.create(600, 400, 'ground');
-        this.platforms.create(50, 250, 'ground');
-        this.platforms.create(750, 220, 'ground');
+        this.platforms.create(this.cameras.main.centerX,  this.cameras.main.height - 20, 'ground').setScale(3).refreshBody();
+        this.platforms.create(this.cameras.main.width-180, this.cameras.main.height-200, 'ground');
+        this.platforms.create(this.cameras.main.width, 240, 'ground');
+        this.platforms.create(100, 300, 'ground');
+        this.platforms.create(this.cameras.main.width-50, this.cameras.main.height-350, 'ground');
+        this.platforms.create(300, 450, 'ground');
 
-        this.player = this.physics.add.sprite(100, 450, 'character');
+        //Set left button
+        let leftButton = new MyButton(this, 80, this.cameras.main.height-130, 'arrowLeft');
+        leftButton.displayHeight = 150
+        leftButton.displayWidth = 150
+        leftButton.setAlpha(0.1)
+        leftButton.setDepth(1);
+        this.add.existing(leftButton);
+        leftButton.onPressed = ()=>{
+            this.touchingLeft = true;
+        };
+        leftButton.onReleased= ()=>{
+            this.touchingLeft = false;
+        };
+        
+        //Set right button
+        let arrowRight = new MyButton(this, 260, this.cameras.main.height-130, 'arrowRight');
+        arrowRight.displayWidth = 150
+        arrowRight.displayHeight = 150
+        arrowRight.setAlpha(0.1)
+        arrowRight.setDepth(1);
+        this.add.existing(arrowRight);
+        arrowRight.onPressed = ()=>{
+            this.touchingRight = true;
+        };
+        arrowRight.onReleased= ()=>{
+            this.touchingRight = false;
+        };
+
+        //Set jump button
+        let jumpButton = new MyButton(this, this.cameras.main.width -70, this.cameras.main.height-130, 'jumpButton');
+        jumpButton.displayWidth = 150
+        jumpButton.displayHeight = 150
+        jumpButton.setAlpha(0.1)
+        jumpButton.setDepth(1);
+        this.add.existing(jumpButton);
+        jumpButton.onPressed = ()=>{
+            this.touchingJumpButton = true;
+        };
+        jumpButton.onReleased= ()=>{
+            this.touchingJumpButton = false;
+        };
+
+
+
+        this.player = this.physics.add.sprite(650, 450, 'character');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
 
@@ -52,7 +107,7 @@ export default class Level1Scene extends Phaser.Scene {
 
         this.stars = this.physics.add.group({
             key: 'star',
-            repeat: 11,
+            repeat: 14 ,
             setXY: { x: 12, y: 0, stepX: 70 }
         });
     
@@ -79,23 +134,28 @@ export default class Level1Scene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
         
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard. KeyCodes.SPACE)
+        this.input.on('pointerdown', function(){
+            this.touchingScreen = true;
+        }, this);
+        this.input.on('pointerup', function(){
+            this.touchingScreen = false;
+        }, this);
     }
     
     update() {
-
-        if(this.gameOver && this.spaceBar.isDown) {
+        
+        if(this.gameOver && (this.spaceBar.isDown || (this.touchingScreen && this.allowRestartByTouching))) {
             this.scene.start('Level1Scene')
         }
 
         if (this.gameOver) {
             return;
         }
-
-        if (this.cursors.left.isDown) {
+        if (this.cursors.left.isDown || this.touchingLeft) {
             this.player.setVelocityX(-160);
 
             this.player.anims.play('left', true);
-        } else if (this.cursors.right.isDown) {
+        } else if (this.cursors.right.isDown || this.touchingRight) {
             this.player.setVelocityX(160);
 
             this.player.anims.play('right', true);
@@ -105,7 +165,7 @@ export default class Level1Scene extends Phaser.Scene {
             this.player.anims.play('turn');
         }
 
-        if (this.cursors.up.isDown && this.player.body.touching.down) {
+        if ((this.cursors.up.isDown || this.touchingJumpButton) && this.player.body.touching.down) {
             this.player.setVelocityY(-330);
         }
     }
@@ -144,26 +204,27 @@ export default class Level1Scene extends Phaser.Scene {
         this.gameOver = true;
 
         this.txt = this.make.text({
-            x: 400,
-            y: 300,
+            x: this.cameras.main.centerX,
+            y: this.cameras.main.centerY,
             text: 'GAME OVER',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 40px Arial',
+                font: 'bold 80px Arial',
                 fill: 'red',
-                wordWrap: { width: 300 }
+                wordWrap: { width: this.cameras.main.width }
             }
         })
         this.txt = this.make.text({
-            x: 400,
-            y: 570,
-            text: 'Press Space Bar to Restart',
+            x: this.cameras.main.centerX,
+            y: this.cameras.main.height - 150,
+            text: 'Press space bar or touch the screen to restart',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 20px Arial',
-                fill: 'white',
-                wordWrap: { width: 800 }
+                font: 'bold 30px Arial',
+                fill: 'black',
+                wordWrap: { width: this.cameras.main.width }
             }
         })
+        this.time.delayedCall(2000, () => this.allowRestartByTouching = true);
     }
 }
