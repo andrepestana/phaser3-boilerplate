@@ -16,7 +16,6 @@ export default class MainMenuScene extends Phaser.Scene {
         
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
 
-        console.log(this.cameras.main)
         this.txt = this.make.text({
             x: this.cameras.main.centerX,
             y: 170,

@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import MyButton from './MyButton'
 import WebFontFile from '../font/WebFontFile'
 
+
 export default class Level1Scene extends Phaser.Scene {
     constructor() {
         super({ key: 'Level1Scene'})
@@ -23,12 +24,10 @@ export default class Level1Scene extends Phaser.Scene {
         this.load.image('jumpButton', './assets/button_grey.png');
     }
     create() {
-        this.scale.startFullscreen()
-        this.allowRestartByTouching = false
+        this.restarting = false
         this.gameOver = false
         this.score = 0
 
-        console.log('this.cameras.main.y - this.cameras.main.centerY', this.cameras.main.y - this.cameras.main.centerY)
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(this.cameras.main.centerX,  this.cameras.main.height - 20, 'ground').setScale(3).refreshBody();
@@ -111,7 +110,7 @@ export default class Level1Scene extends Phaser.Scene {
         this.stars = this.physics.add.group({
             key: 'star',
             repeat: 14 ,
-            setXY: { x: 12, y: 0, stepX: 70 }
+            setXY: { x: 20, y: 0, stepX: 70 }
         });
     
         this.stars.children.iterate(function (child) {
@@ -140,18 +139,25 @@ export default class Level1Scene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
         
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard. KeyCodes.SPACE)
-        this.input.on('pointerdown', function(){
-            this.touchingScreen = true;
+
+        this.input.on('pointerdown', function (event) {
+            if(this.gameOver)
+                this.restart();
+
         }, this);
-        this.input.on('pointerup', function(){
-            this.touchingScreen = false;
-        }, this);
+     
     }
-    
+    restart() {
+        if(!this.restarting) {
+            this.restarting = true
+            this.scene.restart();
+        }
+    }
     update() {
         
-        if(this.gameOver && (this.spaceBar.isDown || (this.touchingScreen && this.allowRestartByTouching))) {
-            this.scene.start('Level1Scene')
+        this.spaceBar
+        if(this.gameOver && (this.spaceBar.isDown)) {
+            this.scene.restart()
         }
 
         if (this.gameOver) {
@@ -236,6 +242,6 @@ export default class Level1Scene extends Phaser.Scene {
                 wordWrap: { width: this.cameras.main.width }
             }
         })
-        this.time.delayedCall(2000, () => this.allowRestartByTouching = true);
+        
     }
 }
