@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import WebFontFile from '../font/WebFontFile'
 
 export default class MainMenuScene extends Phaser.Scene {
     constructor() {
@@ -6,41 +7,66 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     preload() {
+        this.load.addFile(new WebFontFile(this.load, ['Press Start 2P','Alegreya SC:900italic']))
         this.load.image('background', './assets/background.png');
         this.load.spritesheet('character', './assets/andre.png', { frameWidth: 60, frameHeight: 100 });
     }
     
-    create() {
+    create() { 
+        
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
 
         console.log(this.cameras.main)
         this.txt = this.make.text({
             x: this.cameras.main.centerX,
-            y: 100,
-            text: 'Pestana World',
+            y: 170,
+            text: 'Pestana     ',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 40px Arial',
-                fill: 'purple',
-                wordWrap: { width: 300 }
+                fontFamily: '"Alegreya SC"',
+                fontSize: '150px',
+                fill: '#532382',
+                wordWrap: { width: this.cameras.main.x },
+                align: 'center',
+                strokeThickness: 2
             }
         })
-
+        this.txt.setShadow(5, 5, 'rgba(0,0,0,0.5)', 5);
+  
         this.txt = this.make.text({
             x: this.cameras.main.centerX,
-            y: this.cameras.main.height - 100,
+            y: 280,
+            text: '        World ',
+            origin: { x: 0.5, y: 0.5 },
+            style: {
+                fontFamily: '"Alegreya SC"',
+                fontSize: '150px',
+                fill: '#532382',
+                wordWrap: { width: this.cameras.main.x },
+                align: 'center',
+                strokeThickness: 2
+            },
+            thickness: 5
+        })
+        this.txt.setShadow(5, 5, 'rgba(0,0,0,0.5)', 5);
+ 
+        this.txt = this.make.text({
+            x: this.cameras.main.centerX,
+            y: this.cameras.main.height - 50, 
             text: 'Press space bar \nor touch the screen to start',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 20px Arial',
+                fontFamily: '"Press Start 2P"',
+		        fontSize: '30px',
                 fill: 'black',
-                wordWrap: { width: 800 },
+                wordWrap: { width: this.cameras.main.x },
                 align: 'center'
             }
         })
 
-        this.player = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'character', 4);
-
+        this.player = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY+130, 'character', 4);
+        this.player.displayWidth = 180
+        this.player.displayHeight = 300
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard. KeyCodes.SPACE)
         this.input.on('pointerdown', function(){
             this.touchingScreen = true;

@@ -3,7 +3,7 @@ import MainMenuScene from './scenes/MainMenuScene'
 import Level1Scene from './scenes/Level1Scene'
 
 const config = {
-    type: Phaser.Sacel,
+    type: Phaser.AUTO,
     width: 1024,
     height: 768,
     scale: {
@@ -14,7 +14,7 @@ const config = {
       default: 'arcade',
       arcade: {
         gravity: { y: 300 },
-        debug: false
+        debug: true
       }
     },
     input: {

@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import MyButton from './MyButton'
+import WebFontFile from '../font/WebFontFile'
 
 export default class Level1Scene extends Phaser.Scene {
     constructor() {
@@ -7,12 +8,14 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     preload() {
+        this.load.addFile(new WebFontFile(this.load, ['Press Start 2P','Alegreya:800']))
+
         this.touchingLeft = false
         this.load.image('background', './assets/background.png');
         this.load.image('ground', './assets/platform.png');
         
         this.load.image('star', './assets/beer.png');//everyone has their own kind of star
-        this.load.image('bomb', './assets/bomb.png');
+        this.load.image('bomb', './assets/virus.png');
         this.load.spritesheet('character', './assets/andre.png', { frameWidth: 60, frameHeight: 100 });
         
         this.load.image('arrowLeft', './assets/arrow-left.png');
@@ -115,13 +118,16 @@ export default class Level1Scene extends Phaser.Scene {
     
             //  Give each star a slightly different bounce
             child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-    
+            
         });
     
         this.bombs = this.physics.add.group();
     
         //  The score
-        this.scoreText = this.add.text(16, 16, 'score: 0', { font: 'bold 40px Arial', });
+        this.scoreText = this.add.text(16, 16, 'score:0', { 
+            fontFamily: '"Press Start 2P"',
+            fontSize: '20px'
+        });
     
         //  Collide the player and the stars with the platforms
         this.physics.add.collider(this.player, this.platforms);
@@ -174,7 +180,8 @@ export default class Level1Scene extends Phaser.Scene {
 
         //  Add and update the score
         this.score += 10;
-        this.scoreText.setText('Score: ' + this.score);
+        
+        this.scoreText.setText('score:' + this.score);
 
         if (this.stars.countActive(true) === 0) {
             //  A new batch of stars to collect
@@ -187,11 +194,13 @@ export default class Level1Scene extends Phaser.Scene {
             var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
 
             var bomb = this.bombs.create(x, 16, 'bomb');
+            bomb.setTint(0x00ff00);
             bomb.setBounce(1);
             bomb.setCollideWorldBounds(true);
             bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
             bomb.allowGravity = false;
-
+            bomb.displayWidth = 40
+            bomb.displayHeight = 40
         }
     }
     hitBomb (player, bomb) {
@@ -209,18 +218,20 @@ export default class Level1Scene extends Phaser.Scene {
             text: 'GAME OVER',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 80px Arial',
+                fontFamily: '"Alegreya SC"',
+                fontSize: '140px',
                 fill: 'red',
                 wordWrap: { width: this.cameras.main.width }
             }
         })
         this.txt = this.make.text({
             x: this.cameras.main.centerX,
-            y: this.cameras.main.height - 150,
+            y: this.cameras.main.height - 100,
             text: 'Press space bar or touch the screen to restart',
             origin: { x: 0.5, y: 0.5 },
             style: {
-                font: 'bold 30px Arial',
+                fontFamily: '"Press Start 2P"',
+                fontSize: '15px',
                 fill: 'black',
                 wordWrap: { width: this.cameras.main.width }
             }
