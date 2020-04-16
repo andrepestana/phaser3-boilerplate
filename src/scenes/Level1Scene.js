@@ -36,7 +36,10 @@ export default class Level1Scene extends Phaser.Scene {
         this.gameOver = false
         this.score = 0
         
-        this.soundtrack = this.sound.play('soundtrack', { loop: true})
+        this.soundtrack = this.sound.play('soundtrack', { 
+            loop: true,
+            volume: 0.5
+        })
         
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
 
@@ -111,20 +114,56 @@ export default class Level1Scene extends Phaser.Scene {
 
         //  Add and update the score
         this.score += 10;
-
+        
+        this.scoreText.setText('score:' + this.score);
 
         if(this.score % 1000 == 0) {
             this.sound.play('yeah')
+            this.scoreText.setStyle({ 
+                fontFamily: '"Press Start 2P"',
+                fontSize: '80px',
+                color: 'red'
+            })
+            setTimeout(() => { 
+                this.scoreText.setStyle({ 
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: '20px',
+                    color: 'white'
+                })
+             }, 2000);
         } else if(this.score % 500 == 0) {
             this.sound.play('sweet')
+            this.scoreText.setStyle({ 
+                fontFamily: '"Press Start 2P"',
+                fontSize: '40px',
+                color: 'red'
+            })
+            setTimeout(() => { 
+                this.scoreText.setStyle({ 
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: '20px',
+                    color: 'white'
+                })
+             }, 1000);
         } else if(this.score % 100 == 0) {
             this.sound.play('good')
+            this.scoreText.setStyle({ 
+                fontFamily: '"Press Start 2P"',
+                fontSize: '24px',
+                color: 'purple'
+            })
+            setTimeout(() => { 
+                this.scoreText.setStyle({ 
+                    fontFamily: '"Press Start 2P"',
+                    fontSize: '20px',
+                    color: 'white'
+                })
+             }, 1000)
         } else {
             this.sound.play('point')
         }
         
         
-        this.scoreText.setText('score:' + this.score);
 
         if (this.collectableObjects.countActive(true) === 0) {
             //  A new batch of collectableObjects to collect
