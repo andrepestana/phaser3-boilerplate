@@ -38,7 +38,9 @@ export default class Level1Scene extends Phaser.Scene {
         
         this.soundtrack = this.sound.play('soundtrack', { 
             loop: true,
-            volume: 0.5
+            volume: 0.6,
+            detune: 0,
+            seek: 0
         })
         
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'background');
@@ -149,7 +151,7 @@ export default class Level1Scene extends Phaser.Scene {
             this.sound.play('good')
             this.scoreText.setStyle({ 
                 fontFamily: '"Press Start 2P"',
-                fontSize: '24px',
+                fontSize: '30px',
                 color: 'purple'
             })
             setTimeout(() => { 
@@ -190,7 +192,19 @@ export default class Level1Scene extends Phaser.Scene {
     hitEnemy (player, enemy) {
         this.physics.pause();
         this.sound.stopAll()
-        this.sound.play('oh-oh')
+        this.soundtrack = this.sound.play('soundtrack', { 
+            loop: true,
+            volume: 0.6,
+            detune: -250,
+            seek: 0
+        })
+        
+        setTimeout(() => { 
+            this.sound.stopAll()
+            this.sound.setDetune(0)
+            this.sound.play('oh-oh')
+            
+         }, 3000)
         player.setTint(0xff0000);
 
         player.anims.play('turn');
