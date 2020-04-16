@@ -66,6 +66,8 @@ export default class MainMenuScene extends Phaser.Scene {
         this.player = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY+130, 'character', 4);
         this.player.displayWidth = 180
         this.player.displayHeight = 300
+
+        
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard. KeyCodes.SPACE)
         this.input.on('pointerdown', function(){
             this.touchingScreen = true;
